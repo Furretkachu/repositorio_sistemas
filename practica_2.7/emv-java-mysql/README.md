@@ -71,7 +71,7 @@ Conexión a la base de datos mediante variables de entorno
 
 La aplicación se comunica con MySQL a través de la red interna creada por Docker Compose.
 
-##Arquitectura general
+## Arquitectura general
 
 +-----------------------+
 |      Host / PC        |
