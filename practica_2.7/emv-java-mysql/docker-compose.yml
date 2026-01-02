@@ -1,0 +1,57 @@
+# docker-compose.yml — EMV Java + MySQL
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: emv-mysql
+    restart: unless-stopped
+
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: appdb
+      MYSQL_USER: appuser
+      MYSQL_PASSWORD: apppass
+
+    volumes:
+      - db_data:/var/lib/mysql
+
+    ports:
+      - "3306:3306"
+
+    command:
+      [
+        "mysqld",
+        "--character-set-server=utf8mb4",
+        "--collation-server=utf8mb4_unicode_ci"
+      ]
+
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  app:
+    image: eclipse-temurin:21
+    container_name: emv-java
+    working_dir: /app
+
+    volumes:
+      - ./app:/app
+
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_NAME: appdb
+      DB_USER: appuser
+      DB_PASSWORD: apppass
+
+    command: >
+      bash -c "javac Main.java && java Main"
+
+volumes:
+  db_data:
