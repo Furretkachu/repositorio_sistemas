@@ -4,7 +4,6 @@ Quiero que generes un archivo docker-compose.yml completo y funcional para un en
 
 
 ## Definición del EMV y su Arquitectura
-# Definición del EMV (Entorno Mínimo Viable)
 
 El EMV que diseño tiene como objetivo proporcionar un entorno de desarrollo sencillo, reproducible y aislado para aplicaciones Java que utilicen una base de datos MySQL, utilizando contenedores Docker gestionados mediante Docker Compose.
 
