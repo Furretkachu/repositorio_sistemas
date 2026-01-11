@@ -1,0 +1,45 @@
+YAML
+
+version: '3.8'
+
+services:
+  wordpress:
+    image: wordpress:${WORDPRESS_VERSION}
+    container_name: ${PROJECT_NAME}_web
+    restart: always # Si el contenedor falla o el servidor se reinicia, Docker lo levanta de nuevo
+    ports:
+      - "${EXTERNAL_PORT}:80"
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: ${DB_USER}
+      WORDPRESS_DB_PASSWORD: ${DB_PASSWORD}
+      WORDPRESS_DB_NAME: ${DB_NAME}
+    volumes:
+      - wordpress_data:/var/www/html
+      # Opcional: Mapear un fichero de configuración PHP personalizado si fuera necesario
+      # - ./uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
+    depends_on:
+      - db
+    # Buenas prácticas: Limitar recursos en producción
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+
+  db:
+    image: mysql:${MYSQL_VERSION}
+    container_name: ${PROJECT_NAME}_db
+    restart: always
+    environment:
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+    volumes:
+      - db_data:/var/lib/mysql
+    # Por seguridad, en producción NO exponemos el puerto 3306 hacia fuera
+    # (no hay sección 'ports'), solo es accesible internamente por Wordpress.
+
+volumes:
+  wordpress_data:
+  db_data:
